@@ -1,25 +1,37 @@
 #include <iostream>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <string>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/core.hpp>
+#include "TemplateMatching.hpp"
 
 int main(){
-    string::string Answer; 
-    cv::Mat image;
-    image=cv::imread("P:\\Documents\\Code\\Cpp\\VS code\\OpenCV\\IceCream.jpg",CV_LOAD_IMAGE_GRAYSCALE);
-    std::cout<<"HI ! :) "<<std::endl;
-    cv::namedWindow("Wanna Ice cream ? ",CV_WINDOW_AUTOSIZE);
-    cv::imshow("Ice cream Image... o_O i'm jalous",image);
-    std::cout<<"Wanna save that pic ? "std::endl;
-    std::cin>> Answer; 
-    if (Answer[1]=="Y"){
-        cv::imwrite(image,./GrayIcecream);
+    char retry('y');
+    int MatchTemplateMethod;
+
+
+    while (retry == ('y')) {
+        std::cout << "Which matchTemplate method to use ? " << std::endl;
+        std::cin >> MatchTemplateMethod;
+        if (MatchTemplateMethod > 5 || MatchTemplateMethod < 1) {
+            std::cerr << "MatchMethodTemplate !(1;5)";
+        }
+
+        cv::Mat Logo = cv::imread("./Logo.jpg", cv::IMREAD_COLOR);
+        cv::Mat Template = cv::imread("./Template.jpg", cv::IMREAD_COLOR);
+
+        if (Logo.empty() || Template.empty()) {
+            std::cerr << "one or both images are wrongly named" << std::endl;
+            return -1;
+        }
+        TemplateMatching(Logo, Template, MatchTemplateMethod);
+
+        cv::imshow("Partition_window", Logo);
+        cv::waitKey(0);
+        cv::destroyAllWindows();
+
+        std::cout << "wanna retry ? y/n" << std::endl;
+        std::cin >> retry;
     }
-    else if(Answer[2]=="N"){
-        std::cout<<"K"<<std::endl;
-    }
-    else {
-        std::cout<<"Can't read the answer properly."
-        return -1;
-    }
+    return 0;
 }
