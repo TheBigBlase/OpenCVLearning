@@ -14,7 +14,6 @@ TemplateMatching::TemplateMatching(cv::Mat Logo, cv::Mat Template, int MatchTemp
     result.create(result_rows, result_cols, 1);
 
     cv::matchTemplate(Logo, Template, result, MatchTemplateMethod);
-    cv::normalize(result, result, 0, 255, cv::NORM_MINMAX);
 
     cv::minMaxLoc(result, &MinValue, &MaxValue, &MinLoc, &MaxLoc, cv::Mat());
 

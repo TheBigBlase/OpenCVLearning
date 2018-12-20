@@ -4,6 +4,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/core.hpp>
 #include "TemplateMatching.hpp"
+#include "Threshold.hpp"
 
 int main(){
     char retry('y');
@@ -17,16 +18,18 @@ int main(){
             std::cerr << "MatchMethodTemplate !(1;5)";
         }
 
-        cv::Mat Logo = cv::imread("./Logo.jpg", cv::IMREAD_COLOR);
-        cv::Mat Template = cv::imread("./Template.jpg", cv::IMREAD_COLOR);
+        cv::Mat Logo = cv::imread("./partition.jpg", cv::IMREAD_GRAYSCALE);
+        cv::Mat Template = cv::imread("./note.png", cv::IMREAD_GRAYSCALE);
 
         if (Logo.empty() || Template.empty()) {
             std::cerr << "one or both images are wrongly named" << std::endl;
             return -1;
         }
-        TemplateMatching(Logo, Template, MatchTemplateMethod);
 
-        cv::imshow("Partition_window", Logo);
+        auto testMat = Threshold(Logo);
+        TemplateMatching(testMat.getThresholdResult(), Template, 1);
+
+        cv::imshow("Partition_window", testMat.getThresholdResult());
         cv::waitKey(0);
         cv::destroyAllWindows();
 
