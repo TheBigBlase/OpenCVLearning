@@ -4,18 +4,20 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/core.hpp>
 #include "TemplateMatching.hpp"
-#include "Threshold.hpp"
 
 int main(){
-    char retry('y');
+    char retry{'y'};
     int MatchTemplateMethod;
+    double maxValue = 255;
+    double thresh = 127;
 
 
     while (retry == ('y')) {
         std::cout << "Which matchTemplate method to use ? " << std::endl;
         std::cin >> MatchTemplateMethod;
-        if (MatchTemplateMethod > 5 || MatchTemplateMethod < 1) {
-            std::cerr << "MatchMethodTemplate !(1;5)";
+        if (MatchTemplateMethod > 5 || MatchTemplateMethod < 0) {
+            std::cerr << "MatchMethodTemplate !(0;5)";
+            return -1;
         }
 
         cv::Mat Logo = cv::imread("./partition.jpg", cv::IMREAD_GRAYSCALE);
@@ -26,10 +28,17 @@ int main(){
             return -1;
         }
 
-        auto testMat = Threshold(Logo);
-        TemplateMatching(testMat.getThresholdResult(), Template, 1);
 
-        cv::imshow("Partition_window", testMat.getThresholdResult());
+        cv::Mat ThresholdResult;
+        cv::threshold(Logo, ThresholdResult, thresh, maxValue, cv::THRESH_BINARY);
+
+        auto result = TemplateMatching(ThresholdResult, Template, MatchTemplateMethod);
+
+        cv::imshow("Partition_window", result.resultColors);
+        cv::imshow("Other window", Template);
+
+
+
         cv::waitKey(0);
         cv::destroyAllWindows();
 
