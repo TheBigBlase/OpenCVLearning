@@ -10,6 +10,7 @@
 class TemplateMatching {
 private:
     double MaxValue;
+    double MinValue;
     cv::Point MinLoc;
     cv::Point MaxLoc;
     cv::Point MatchLoc;
@@ -18,8 +19,8 @@ private:
 public:
     TemplateMatching(cv::Mat, cv::Mat, int);
 
+    cv::Mat result;
     cv::Mat resultColors;
-    double MinValue;
 };
 
 

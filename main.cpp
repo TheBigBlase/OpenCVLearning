@@ -5,6 +5,7 @@
 #include <opencv2/core.hpp>
 #include "TemplateMatching.hpp"
 
+
 int main(){
     char retry{'y'};
     int MatchTemplateMethod;
@@ -20,8 +21,8 @@ int main(){
             return -1;
         }
 
-        cv::Mat Logo = cv::imread("./partition.jpg", cv::IMREAD_GRAYSCALE);
-        cv::Mat Template = cv::imread("./note.png", cv::IMREAD_GRAYSCALE);
+        cv::Mat Logo = cv::imread("./partition.png", cv::IMREAD_GRAYSCALE);
+        cv::Mat Template = cv::imread("./accent.png", cv::IMREAD_GRAYSCALE);
 
         if (Logo.empty() || Template.empty()) {
             std::cerr << "one or both images are wrongly named" << std::endl;
@@ -32,13 +33,26 @@ int main(){
         cv::Mat ThresholdResult;
         cv::threshold(Logo, ThresholdResult, thresh, maxValue, cv::THRESH_BINARY);
 
-        auto result = TemplateMatching(ThresholdResult, Template, MatchTemplateMethod);
-
-        cv::imshow("Partition_window", result.resultColors);
-        cv::imshow("Other window", Template);
+        //auto result = TemplateMatching(ThresholdResult, Template, MatchTemplateMethod);
 
 
+        std::vector<std::vector<cv::Point>> contours; //copy pasted
+        findContours(ThresholdResult, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
 
+        for (int i = 0; i < contours.size(); ++i) {
+            cv::Mat1b mask(ThresholdResult.rows, ThresholdResult.cols, uchar(0));
+            drawContours(mask, contours, i, cv::Scalar(127));
+
+            cv::Point max_point;
+            double max_val;
+            cv::minMaxLoc(ThresholdResult, NULL, &max_val, NULL, &max_point, mask);
+
+            rectangle(ThresholdResult, cv::Rect(max_point.x, max_point.y, Template.cols, Template.rows),
+                      cv::Scalar(127), 2);
+        }
+
+
+        cv::imshow("Partition_window", ThresholdResult);
         cv::waitKey(0);
         cv::destroyAllWindows();
 
